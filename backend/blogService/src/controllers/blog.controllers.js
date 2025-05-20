@@ -4,11 +4,23 @@ import ApiResponse from "../utils/ApiResponse.js"
 import ApiError from "../../../authorService/src/utils/ApiError.js";
 import { Comment } from "../models/comments.model.js";
 import { Saved } from "../models/savedBlogs.model.js";
+import { redisClient } from "../index.js";
 
 const getAllBlogs = AsyncHandler(async(req,res)=>{
 
     const { search = "", category = "" } = req.query;
 
+    const cacheKey = `blogs:${search}:${category}`;
+
+    const cached = await redisClient.get(cacheKey)
+
+    if(cached){
+
+      console.log("serving from redis cache")
+
+      res.status(200).json(new ApiResponse(201,JSON.parse(cached),"Blogs fetched Successfully"))
+      return
+    }
     const filter = {};
 
     // If search is provided, match title or description
@@ -27,6 +39,10 @@ const getAllBlogs = AsyncHandler(async(req,res)=>{
     // Fetch blogs based on filter
     const blogs = await Blog.find(filter).sort({ createdAt: -1 });
 
+    console.log("serving from db")
+
+    await redisClient.set(cacheKey,JSON.stringify(blogs),{EX : 3600})
+
     res.status(200).json(new ApiResponse(201,blogs,"Blogs fetched Successfully"))
 
 })
@@ -41,6 +57,23 @@ const getSingleBlog = AsyncHandler(async(req,res)=>{
     throw new ApiError(404,"Blog not found")
   }
 
+  const cacheKey = `blogs:${blogid}`
+
+  const cached = await redisClient.get(cacheKey)
+
+  if(cached){
+
+    console.log("serving from redis cache")
+
+    res.status(200).json(new ApiResponse(201,JSON.parse(cached),"Blog fetched successfully"))
+
+    return
+  }
+
+  console.log("serving from db")
+
+  await redisClient.set(cacheKey,JSON.stringify(blog),{EX : 3600})
+  
   res.status(200).json(new ApiResponse(201,blog,"Blog fetched successfully"))
 })
 
