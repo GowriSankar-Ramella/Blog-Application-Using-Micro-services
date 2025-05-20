@@ -2,8 +2,11 @@ import dotenv from "dotenv"
 import app from './app.js'
 import connectdb from './config/db.js'
 import {createClient} from 'redis'
+import { startCacheConsumer } from "./utils/consumer.js"
 
 dotenv.config({path : './.env'})
+
+startCacheConsumer()
 
 connectdb()
 .then(()=>{
