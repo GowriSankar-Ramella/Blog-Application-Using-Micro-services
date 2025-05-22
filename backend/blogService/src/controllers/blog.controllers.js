@@ -99,9 +99,13 @@ const addComment = AsyncHandler(async(req,res)=>{
 
 const getAllComments = AsyncHandler(async(req,res)=>{
 
-  const {id:blogid} = req.params.id
+  console.log("Entered  into comments")
 
-  const allComments = await Comment.find(blogid).sort({ createdAt: -1 })
+  const {id:blogid} = req.params
+
+  console.log(blogid)
+
+  const allComments = await Comment.find({blogid}).sort({ createdAt: -1 })
 
   res.status(200).json(new ApiResponse(201,allComments,"All comments fetched successfully"))
 })

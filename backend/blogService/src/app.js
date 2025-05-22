@@ -3,7 +3,9 @@ import errorHandler from "./middleware/errorHandler.js"
 import cors from "cors"
 import cookieparser from "cookie-parser"
 import blogRoutes from "./routes/blog.routes.js"
+import dotenv from "dotenv"
 
+dotenv.config()
 
 const app = express()
 
