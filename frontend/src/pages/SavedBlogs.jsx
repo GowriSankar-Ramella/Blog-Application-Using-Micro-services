@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { blogService} from "../api/axios";
-import BlogCard from "../components/BlogCard"; // Adjust the path if different
+import { blogService } from "../api/axios";
+import BlogCard from "../components/BlogCard";
 
- const SavedBlogs= () =>{
+const SavedBlogs = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -17,7 +17,7 @@ import BlogCard from "../components/BlogCard"; // Adjust the path if different
         );
 
         const fullBlogs = await Promise.all(blogFetchPromises);
-        setBlogs(fullBlogs.filter(Boolean)); // Remove any nulls
+        setBlogs(fullBlogs.filter(Boolean));
       } catch (err) {
         console.error("Failed to load saved blogs:", err);
       } finally {
@@ -29,20 +29,28 @@ import BlogCard from "../components/BlogCard"; // Adjust the path if different
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto px-4 py-10">
+      <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+        Your Saved Blogs
+      </h2>
+
       {loading ? (
-        <div className="text-center mt-10 text-lg">Loading blogs...</div>
+        <div className="text-center text-blue-500 text-lg font-medium py-10">
+          Loading your saved blogs...
+        </div>
+      ) : blogs.length === 0 ? (
+        <div className="text-center text-gray-500 py-10 text-lg">
+          You haven't saved any blogs yet.
+        </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-          {blogs.length === 0 ? (
-            <p className="col-span-full text-center text-gray-500">No blogs found.</p>
-          ) : (
-            blogs.map((blog) => <BlogCard key={blog._id} blog={blog} />)
-          )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          {blogs.map((blog) => (
+            <BlogCard key={blog._id} blog={blog} />
+          ))}
         </div>
       )}
     </div>
   );
-}
+};
 
-export default SavedBlogs
+export default SavedBlogs;

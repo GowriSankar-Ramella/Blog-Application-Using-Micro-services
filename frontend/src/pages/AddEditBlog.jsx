@@ -4,10 +4,9 @@ import { blogService, authorService } from "../api/axios";
 import JoditEditor from "jodit-react";
 
 export default function AddEditBlog() {
-  const { id } = useParams(); // blogId
+  const { id } = useParams();
   const navigate = useNavigate();
   const isEditMode = Boolean(id);
-
   const editor = useRef(null);
 
   const [formData, setFormData] = useState({
@@ -18,6 +17,7 @@ export default function AddEditBlog() {
   });
 
   const [blogContent, setBlogContent] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     if (isEditMode) {
@@ -36,6 +36,7 @@ export default function AddEditBlog() {
         image: null,
       });
       setBlogContent(blog.blogContent);
+      setImagePreview(blog.imageUrl); // assuming imageUrl field from backend
     } catch (err) {
       console.error("Error fetching blog:", err);
     }
@@ -43,15 +44,17 @@ export default function AddEditBlog() {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "image" ? files[0] : value,
-    }));
+    if (name === "image") {
+      const file = files[0];
+      setFormData((prev) => ({ ...prev, image: file }));
+      if (file) setImagePreview(URL.createObjectURL(file));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!formData.image && !isEditMode) {
       return alert("Image is required");
     }
@@ -61,7 +64,7 @@ export default function AddEditBlog() {
     data.append("description", formData.description);
     data.append("category", formData.category);
     data.append("blogContent", blogContent);
-    if (formData.image) data.append("file", formData.image); // must be 'file' for backend
+    if (formData.image) data.append("file", formData.image);
 
     try {
       if (isEditMode) {
@@ -76,59 +79,90 @@ export default function AddEditBlog() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-8 p-6 bg-white shadow rounded">
-      <h2 className="text-2xl font-bold mb-4 text-center">
-        {isEditMode ? "Edit Blog" : "Create Blog"}
+    <div className="max-w-5xl mx-auto mt-10 p-8 bg-white rounded-2xl shadow-xl">
+      <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">
+        {isEditMode ? "Edit Blog" : "Create a New Blog"}
       </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          placeholder="Blog Title"
-          className="w-full p-2 border rounded"
-          required
-        />
-
-        <textarea
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          placeholder="Short Description"
-          className="w-full p-2 border rounded"
-          required
-        />
-
-        <input
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          placeholder="Category (e.g. Tech, Travel)"
-          className="w-full p-2 border rounded"
-          required
-        />
-
-        <input
-          type="file"
-          accept="image/*"
-          name="image"
-          onChange={handleChange}
-          className="w-full"
-          required={!isEditMode}
-        />
-
-        <div className="border rounded p-2">
-          <JoditEditor
-            ref={editor}
-            value={blogContent}
-            onChange={(newContent) => setBlogContent(newContent)}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Title</label>
+          <input
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            placeholder="Enter blog title"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+            required
           />
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Short Description</label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Enter a short summary of your blog"
+            rows={3}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-300"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Category</label>
+          <select
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+            required
+          >
+            <option value="" disabled>Select a category</option>
+            <option value="Technology">Technology</option>
+            <option value="Travel">Travel</option>
+            <option value="Health">Health</option>
+            <option value="Education">Education</option>
+            <option value="Lifestyle">Lifestyle</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Upload Image</label>
+          <input
+            type="file"
+            accept="image/*"
+            name="image"
+            onChange={handleChange}
+            className="w-full text-sm"
+            required={!isEditMode}
+          />
+          {imagePreview && (
+            <div className="mt-4 flex justify-center">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="max-h-60 w-auto object-contain rounded-md shadow-sm border p-1"
+              />
+            </div>
+          )}
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Content</label>
+          <div className="border rounded-md shadow-sm">
+            <JoditEditor
+              ref={editor}
+              value={blogContent}
+              onChange={(newContent) => setBlogContent(newContent)}
+            />
+          </div>
         </div>
 
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-md transition duration-200"
         >
           {isEditMode ? "Update Blog" : "Publish Blog"}
         </button>

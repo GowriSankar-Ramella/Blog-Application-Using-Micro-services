@@ -2,18 +2,19 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { userService } from "../api/axios";
 import { useAuth } from "../context/AuthContext";
+import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 export default function AuthorProfile() {
   const { id } = useParams();
   const [author, setAuthor] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAuthor = async () => {
       try {
-        const res = await userService.get(`/${id}`); // Backend should return full public profile
+        const res = await userService.get(`/${id}`);
         setAuthor(res.data.data);
       } catch (err) {
         console.error("Error fetching author:", err);
@@ -31,37 +32,38 @@ export default function AuthorProfile() {
   const isOwnProfile = user && user._id === author._id;
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-6 bg-white shadow rounded">
+    <div className="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
       {/* Profile Header */}
       <div className="text-center">
         {author.image && (
           <img
             src={author.image}
             alt={author.name}
-            className="w-24 h-24 rounded-full mx-auto mb-4 object-cover border"
+            className="w-28 h-28 rounded-full mx-auto mb-4 object-cover border-4 border-blue-200"
           />
         )}
-        <h2 className="text-2xl font-bold">{author.name}</h2>
-        <p className="text-gray-600">{author.email}</p>
+        <h2 className="text-3xl font-bold text-gray-800">{author.name}</h2>
+        <p className="text-gray-500 text-sm">{author.email}</p>
       </div>
 
       {/* Bio */}
       {author.bio && (
         <div className="mt-4 text-center">
-          <p className="text-gray-700">{author.bio}</p>
+          <p className="text-gray-700 italic">{`"${author.bio}"`}</p>
         </div>
       )}
 
       {/* Social Links */}
-      <div className="mt-6 flex justify-center gap-4">
+      <div className="mt-6 flex justify-center gap-6">
         {author.facebook && (
           <a
             href={author.facebook}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 hover:underline"
+            className="text-blue-600 hover:text-blue-800 text-xl"
+            title="Facebook"
           >
-            Facebook
+            <FaFacebook />
           </a>
         )}
         {author.instagram && (
@@ -69,9 +71,10 @@ export default function AuthorProfile() {
             href={author.instagram}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-pink-500 hover:underline"
+            className="text-pink-500 hover:text-pink-700 text-xl"
+            title="Instagram"
           >
-            Instagram
+            <FaInstagram />
           </a>
         )}
         {author.linkedin && (
@@ -79,34 +82,30 @@ export default function AuthorProfile() {
             href={author.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-800 hover:underline"
+            className="text-blue-800 hover:text-blue-900 text-xl"
+            title="LinkedIn"
           >
-            LinkedIn
+            <FaLinkedin />
           </a>
         )}
       </div>
 
       {/* Own Profile Controls */}
       {isOwnProfile && (
-        <div className="mt-6 flex justify-center gap-4">
+        <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
           <button
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 w-full sm:w-auto"
             onClick={() => navigate("/profile/edit")}
           >
             Edit Profile
           </button>
           <button
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            className="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700 w-full sm:w-auto"
             onClick={() => navigate("/add")}
           >
             Add Blog
           </button>
-          <button
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-            onClick={logout}
-          >
-            Logout
-          </button>
+
         </div>
       )}
     </div>
