@@ -72,7 +72,7 @@ export default function AddEditBlog() {
       } else {
         await authorService.post("/new", data);
       }
-      navigate("/");
+      navigate("/home");
     } catch (err) {
       console.error("Blog submission failed:", err);
     }
