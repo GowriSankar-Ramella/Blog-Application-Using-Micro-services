@@ -76,7 +76,7 @@ export default function BlogDetail() {
     if (window.confirm("Are you sure you want to delete this blog?")) {
       try {
         await authorService.delete(`/delete/${id}`);
-        navigate("/");
+        navigate("/home");
       } catch (err) {
         console.error("Delete failed:", err);
       }

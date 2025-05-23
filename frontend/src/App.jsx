@@ -9,13 +9,15 @@ import BlogDetail from "./pages/BlogDetail";
 import EditProfile from "./pages/EditProfile";
 import SavedBlogs from "./pages/SavedBlogs";
 import ProtectedRoute from "./pages/ProtectedRoute";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
   return (
     <>
       <Routes>
+        <Route path="/" element={<LandingPage/>} />
         <Route element={<Layout />}>
-          <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
           <Route path="/profile/:id" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/saved" element={<ProtectedRoute><SavedBlogs /></ProtectedRoute>} />
           <Route path="/add" element={<ProtectedRoute><AddEditBlog /></ProtectedRoute>} />

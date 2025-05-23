@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await userService.post("/login", formData); // Cookie set here
       await fetchUser(); // Fetch and set user after login
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       throw error; // Bubble error to handle in component
     }
