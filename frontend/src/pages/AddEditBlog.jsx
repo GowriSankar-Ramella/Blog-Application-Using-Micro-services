@@ -36,7 +36,7 @@ export default function AddEditBlog() {
         image: null,
       });
       setBlogContent(blog.blogContent);
-      setImagePreview(blog.imageUrl); // assuming imageUrl field from backend
+      setImagePreview(blog.image); // assuming imageUrl field from backend
     } catch (err) {
       console.error("Error fetching blog:", err);
     }
