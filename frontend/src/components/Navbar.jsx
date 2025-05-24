@@ -14,7 +14,7 @@ const Navbar = () => {
     <nav className="bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg px-6 py-4 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="text-3xl font-bold text-white tracking-tight">
+        <Link to="/home" className="text-3xl font-bold text-white tracking-tight">
           Blogify<span className="text-yellow-300">.</span>
         </Link>
 
@@ -23,7 +23,7 @@ const Navbar = () => {
           {user ? (
             <>
               <Link
-                to="/"
+                to="/home"
                 className="text-white hover:text-yellow-300 font-medium transition duration-200"
               >
                 Home
