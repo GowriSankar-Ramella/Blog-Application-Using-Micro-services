@@ -70,21 +70,3 @@ User Service <---> Blog Service <---> Author Service
 
 Each service is independently deployable and maintainable.
 
----
-
-## 🧪 Getting Started (Local Setup)
-
-```bash
-# Clone the repo
-git clone https://github.com/your-username/blog-microservice-app.git
-cd blog-microservice-app
-
-# Setup each microservice (example: User Service)
-cd user-service
-npm install
-npm run dev
-
-# Repeat for blog-service and author-service
-
-# Start Redis and RabbitMQ (optional via Docker)
-docker-compose up -d
