@@ -1,4 +1,3 @@
-````markdown
 # 📝 Blog Application Using Microservices
 
 A full-stack blogging platform built with microservices architecture, featuring independent services for user management, blog operations, and author functionalities. The application includes a modern React frontend with real-time features and cloud-based media storage.
